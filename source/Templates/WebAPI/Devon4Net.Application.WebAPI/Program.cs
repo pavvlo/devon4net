@@ -9,6 +9,7 @@ using Devon4Net.Infrastructure.Logger;
 using Devon4Net.Application.WebAPI.Implementation.Configuration;
 using Devon4Net.Application.WebAPI.Configuration.Application;
 using Devon4Net.Infrastructure.WebAPI.Configuration;
+using Devon4Net.Infrastructure.MongoDb;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,7 @@ builder.Services.SetupMediatR(builder.Configuration);
 builder.Services.SetupKafka(builder.Configuration);
 builder.Services.SetupGrpc(builder.Configuration);
 builder.Services.SetupDevonDependencyInjection(builder.Configuration);
+builder.Services.SetupMongoDb(builder.Configuration);
 #endregion
 
 var app = builder.Build();

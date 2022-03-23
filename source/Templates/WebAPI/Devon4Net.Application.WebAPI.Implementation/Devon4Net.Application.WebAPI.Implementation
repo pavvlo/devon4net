@@ -520,82 +520,45 @@
             </summary>
             <param name="todoId"></param>
         </member>
-        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Commands.TodoCommand">
+        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController">
             <summary>
-            TO-DO command creation via RabbitMq
+            TODOs controller
             </summary>
         </member>
-        <member name="P:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Commands.TodoCommand.Description">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController.#ctor">
             <summary>
-            Description
+            Constructor
             </summary>
+            <param name=""></param>
         </member>
-        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Controllers.RabbitMqController">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController.GetStudents">
             <summary>
-            Controller sample to show how RabbitMq works
-            Please setup your RabbitMq server in the configuration file
+            Gets the entire list of Students
             </summary>
-        </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Controllers.RabbitMqController.#ctor(Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler,Microsoft.Extensions.Options.IOptions{Devon4Net.Infrastructure.Common.Options.RabbitMq.RabbitMqOptions})">
-            <summary>
-            Class constructor
-            </summary>
-            <param name="todoRabbitMqHandler">The main handler injected via DI</param>
-            <param name="rabbitMqOptions">The RabbitMq options to check if there is any instance set up</param>
-        </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Controllers.RabbitMqController.CreateTodo(System.String)">
-            <summary>
-            Creates a TO-DO command sending a RabbitMq message
-            </summary>
-            <param name="todoDescription">The description of the TO-DO command. It cannot be empty</param>
             <returns></returns>
         </member>
-        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController.GetStudent(System.String)">
             <summary>
-            TodoRabbitMqHandler 
+            Gets the entire list of Student
             </summary>
+            <returns></returns>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,System.Boolean)">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController.Create(Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student)">
             <summary>
-            TodoRabbitMqHandler constructor to ensure the DI needs
+            Creates the object
             </summary>
-            <param name="services"></param>
-            <param name="serviceBus"></param>
-            <param name="subscribeToChannel"></param>
+            <returns></returns>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupService,System.Boolean)">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController.Delete(System.String)">
             <summary>
-            TodoRabbitMqHandler constructor to ensure the DI needs
+            Deletes the object provided the id
             </summary>
-            <param name="services"></param>
-            <param name="serviceBus"></param>
-            <param name="rabbitMqBackupService"></param>
-            <param name="subscribeToChannel"></param>
+            <returns></returns>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupLiteDbService,System.Boolean)">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.StudentController.ModifyStudent(Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student)">
             <summary>
-            TodoRabbitMqHandler constructor to ensure the DI needs
+            Modifies the done status of the object provided the id
             </summary>
-            <param name="services"></param>
-            <param name="serviceBus"></param>
-            <param name="rabbitMqBackupLiteDbService"></param>
-            <param name="subscribeToChannel"></param>
-        </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupService,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupLiteDbService,System.Boolean)">
-            <summary>
-            TodoRabbitMqHandler constructor to ensure the DI needs
-            </summary>
-            <param name="services"></param>
-            <param name="serviceBus"></param>
-            <param name="rabbitMqBackupService"></param>
-            <param name="rabbitMqBackupLiteDbService"></param>
-            <param name="subscribeToChannel"></param>
-        </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.HandleCommand(Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Commands.TodoCommand)">
-            <summary>
-            TodoRabbitMqHandler handler command
-            </summary>
-            <param name="command"></param>
             <returns></returns>
         </member>
         <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers.TodoController">
@@ -766,6 +729,84 @@
             <summary>
             
             </summary>
+        </member>
+        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Commands.TodoCommand">
+            <summary>
+            TO-DO command creation via RabbitMq
+            </summary>
+        </member>
+        <member name="P:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Commands.TodoCommand.Description">
+            <summary>
+            Description
+            </summary>
+        </member>
+        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Controllers.RabbitMqController">
+            <summary>
+            Controller sample to show how RabbitMq works
+            Please setup your RabbitMq server in the configuration file
+            </summary>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Controllers.RabbitMqController.#ctor(Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler,Microsoft.Extensions.Options.IOptions{Devon4Net.Infrastructure.Common.Options.RabbitMq.RabbitMqOptions})">
+            <summary>
+            Class constructor
+            </summary>
+            <param name="todoRabbitMqHandler">The main handler injected via DI</param>
+            <param name="rabbitMqOptions">The RabbitMq options to check if there is any instance set up</param>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Controllers.RabbitMqController.CreateTodo(System.String)">
+            <summary>
+            Creates a TO-DO command sending a RabbitMq message
+            </summary>
+            <param name="todoDescription">The description of the TO-DO command. It cannot be empty</param>
+            <returns></returns>
+        </member>
+        <member name="T:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler">
+            <summary>
+            TodoRabbitMqHandler 
+            </summary>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,System.Boolean)">
+            <summary>
+            TodoRabbitMqHandler constructor to ensure the DI needs
+            </summary>
+            <param name="services"></param>
+            <param name="serviceBus"></param>
+            <param name="subscribeToChannel"></param>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupService,System.Boolean)">
+            <summary>
+            TodoRabbitMqHandler constructor to ensure the DI needs
+            </summary>
+            <param name="services"></param>
+            <param name="serviceBus"></param>
+            <param name="rabbitMqBackupService"></param>
+            <param name="subscribeToChannel"></param>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupLiteDbService,System.Boolean)">
+            <summary>
+            TodoRabbitMqHandler constructor to ensure the DI needs
+            </summary>
+            <param name="services"></param>
+            <param name="serviceBus"></param>
+            <param name="rabbitMqBackupLiteDbService"></param>
+            <param name="subscribeToChannel"></param>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.#ctor(Microsoft.Extensions.DependencyInjection.IServiceCollection,EasyNetQ.IBus,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupService,Devon4Net.Infrastructure.RabbitMQ.Domain.ServiceInterfaces.IRabbitMqBackupLiteDbService,System.Boolean)">
+            <summary>
+            TodoRabbitMqHandler constructor to ensure the DI needs
+            </summary>
+            <param name="services"></param>
+            <param name="serviceBus"></param>
+            <param name="rabbitMqBackupService"></param>
+            <param name="rabbitMqBackupLiteDbService"></param>
+            <param name="subscribeToChannel"></param>
+        </member>
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers.TodoRabbitMqHandler.HandleCommand(Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Commands.TodoCommand)">
+            <summary>
+            TodoRabbitMqHandler handler command
+            </summary>
+            <param name="command"></param>
+            <returns></returns>
         </member>
         <member name="T:Devon4Net.Application.WebAPI.Implementation.Configuration.DevonConfiguration">
             <summary>

@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Devon4Net.Infrastructure.MongoDb\Devon4Net.Infrastructure.MongoDb.csproj" />
     <ProjectReference Include="..\..\..\Modules\Devon4Net.Infrastructure.CircuitBreaker\Devon4Net.Infrastructure.CircuitBreaker.csproj" />
     <ProjectReference Include="..\..\..\Modules\Devon4Net.Infrastructure.Common\Devon4Net.Infrastructure.Common.csproj" />
     <ProjectReference Include="..\..\..\Modules\Devon4Net.Infrastructure.Extensions\Devon4Net.Infrastructure.Extensions.csproj" />
