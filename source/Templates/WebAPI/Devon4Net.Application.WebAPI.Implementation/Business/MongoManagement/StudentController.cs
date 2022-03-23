@@ -1,12 +1,9 @@
 ﻿using Devon4Net.Infrastructure.Logger.Logging;
-using Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Dto;
-using Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Service;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement;
+using Devon4Net.Infrastructure.MongoDb.Repository;
 
-namespace Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Controllers
+namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
 {
     /// <summary>
     /// TODOs controller
@@ -15,13 +12,17 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Co
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
+        private readonly IRepository<Student> _studentRepository;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name=""></param>
-        public StudentController()
+        /// <param name="studentRepository"></param>
+        /// 
+
+        public StudentController(IRepository<Student> studentRepository)
         {
+            _studentRepository = studentRepository;
         }
 
         /// <summary>
@@ -33,26 +34,13 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Co
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult GetStudents()
+        public async Task<ActionResult> GetStudents()
         {
             Devon4NetLogger.Debug("Executing GetTodo from controller TodoController");
-            return Ok();
+            var result = await _studentRepository.Get();
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Gets the entire list of Student
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(List<TodoDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult GetStudent(string studentId)
-        {
-            Devon4NetLogger.Debug("Executing GetTodo from controller TodoController");
-            return Ok();
-        }
 
         /// <summary>
         /// Creates the object
@@ -63,10 +51,11 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Co
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult Create(Student student)
+        public async Task<ActionResult> Create(Student student)
         {
             Devon4NetLogger.Debug("Executing GetTodo from controller TodoController");
-            return Ok();
+            await _studentRepository.Create(student);
+            return Ok("Se ha creado el estudiante" + student.Name);
         }
 
         /// <summary>
@@ -78,10 +67,10 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Co
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult Delete(string studentId)
+        public async Task <ActionResult> Delete(Student student)
         {
-            Devon4NetLogger.Debug("Executing GetTodo from controller TodoController");
-            return Ok();
+            Devon4NetLogger.Debug("Executing GetTodo from controller TodoController"); 
+            return Ok(await _studentRepository.Delete(student));
         }
 
         /// <summary>
@@ -94,10 +83,29 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Co
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpOptions]
-        public ActionResult ModifyStudent(Student student)
+        public async Task <ActionResult> ReplaceStudent(Student student)
         {
             Devon4NetLogger.Debug("Executing ModifyTodo from controller TodoController");
-            return Ok();
+            await _studentRepository.Replace(student);
+            return Ok("Se ha modificado el estudiante" + student.Name);
+        }
+
+        /// <summary>
+        /// Modifies the done status of the object provided the id
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("/v2")]
+        [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpOptions]
+        public async Task<ActionResult> UpdateStudent(Student student)
+        {
+            Devon4NetLogger.Debug("Executing ModifyTodo from controller TodoController");
+            await _studentRepository.Update(student);
+            return Ok("Se ha modificado el estudiante " + student.Name);
         }
     }
 }

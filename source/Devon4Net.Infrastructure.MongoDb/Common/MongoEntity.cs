@@ -7,6 +7,6 @@ namespace Devon4Net.Infrastructure.MongoDb.Common
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
     }
 }

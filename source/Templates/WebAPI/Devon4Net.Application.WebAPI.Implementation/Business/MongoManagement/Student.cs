@@ -8,5 +8,6 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
         public string Name { get; set; }
 
         public string Surname { get; set; }
+        public Subject Subject { get; set; }
     }
 }
