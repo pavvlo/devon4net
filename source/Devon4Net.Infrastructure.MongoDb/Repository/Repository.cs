@@ -64,16 +64,27 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
         {
             var query = await _collection.FindAsync(e => e.Id == entity.Id).ConfigureAwait(false);
             var old = query.FirstOrDefault();
-            await Replace(UpdateNonNullProperties(entity, old));
+            await Replace((T)UpdateNonNullProperties(entity, old));
         }
-        private static T UpdateNonNullProperties(T newEntity, T oldEntity)
+        private static object UpdateNonNullProperties(object newEntity, object oldEntity)
         {
             foreach (var property in newEntity.GetType().GetProperties())
             {
-                if (property.GetValue(newEntity) != null)
+                if (property.PropertyType.IsClass && !property.PropertyType.FullName.StartsWith("System."))
+                {
+                   var result = UpdateNonNullProperties(property.GetGetMethod().Invoke(newEntity,null), property.GetGetMethod().Invoke(oldEntity, null));
+                   property.SetValue(oldEntity, result);
+                }
+                else if (property.GetValue(newEntity) != null)
                     property.SetValue(oldEntity, property.GetValue(newEntity));
             }
             return oldEntity;
+        }
+
+        public async Task<T> Update(FilterDefinition<T> filter, UpdateDefinition<T> update)
+        {
+            var result = await _collection.FindOneAndUpdateAsync(filter, update).ConfigureAwait(false);
+            return result;
         }
 
         public async Task<T> Delete(T entity)

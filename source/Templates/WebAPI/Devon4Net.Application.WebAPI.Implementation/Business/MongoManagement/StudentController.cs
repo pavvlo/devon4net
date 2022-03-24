@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Devon4Net.Infrastructure.MongoDb.Repository;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
 {
@@ -144,7 +146,11 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
         public async Task<ActionResult> UpdateStudent(Student student)
         {
             Devon4NetLogger.Debug("Executing ModifyTodo from controller TodoController");
-            await _studentRepository.Update(student);
+            var builder = Builders<Student>.Filter;
+            var builderUpdate = Builders<Student>.Update;
+            var filter = builder.Eq(student => student.Name, "string");
+            var update = builderUpdate.Set(student => student.Name, "Melania");
+            await _studentRepository.Update(filter, update);
             return Ok("Se ha modificado el estudiante " + student.Name);
         }
 
