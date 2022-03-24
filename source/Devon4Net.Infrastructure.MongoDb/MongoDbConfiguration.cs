@@ -13,7 +13,7 @@ namespace Devon4Net.Infrastructure.MongoDb
         public static void SetupMongoDb(this IServiceCollection services, IConfiguration configuration)
         {
             var mongoOptions = services.GetTypedOptions<MongoDbOptions>(configuration, MongoDbConstants.OptionsSection);
-            if ( mongoOptions == null || !mongoOptions.UseMongo || string.IsNullOrEmpty(mongoOptions.ConnectionString) ) return;
+            if (mongoOptions == null || !mongoOptions.UseMongo || string.IsNullOrEmpty(mongoOptions.ConnectionString)) return;
 
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));

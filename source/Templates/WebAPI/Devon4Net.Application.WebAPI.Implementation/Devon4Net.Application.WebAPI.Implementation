@@ -532,19 +532,19 @@
             <param name="studentRepository"></param>
             
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.GetStudents">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.GetStudents(System.String)">
             <summary>
             Gets the entire list of Students
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.Create(Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student)">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.Create(System.Collections.Generic.IEnumerable{Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student})">
             <summary>
             Creates the object
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.Delete(Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student)">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.Delete(System.Collections.Generic.IEnumerable{Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student})">
             <summary>
             Deletes the object provided the id
             </summary>

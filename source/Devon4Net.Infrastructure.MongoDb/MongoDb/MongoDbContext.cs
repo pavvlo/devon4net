@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace Devon4Net.Infrastructure.MongoDb.MongoDb
 {
-    public class MongoDbContext: IMongoDbContext
+    public class MongoDbContext : IMongoDbContext
     {
         public IMongoDatabase Database { get; set; }
 
