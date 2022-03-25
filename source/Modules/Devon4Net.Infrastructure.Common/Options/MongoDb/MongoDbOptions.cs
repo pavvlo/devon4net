@@ -4,9 +4,8 @@
     {
         public bool UseMongo { get; set; }
 
-        public string ConnectionString { get; set; }
+        public bool AllowMultipleDatabases { get; set; }
 
-        public string DatabaseName { get; set; }
-
+        public IEnumerable<MongoDatabase> Databases { get; set; }
     }
 }

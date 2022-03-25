@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Devon4Net.Infrastructure.MongoDb.Repository;
 using MongoDB.Driver;
-using MongoDB.Bson;
 
 namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
 {

@@ -1,4 +1,5 @@
 ﻿using Devon4Net.Infrastructure.MongoDb.Common;
+using Devon4Net.Infrastructure.MongoDb.Constants;
 using Devon4Net.Infrastructure.MongoDb.MongoDb;
 using MongoDB.Driver;
 using System.Linq.Expressions;
@@ -7,13 +8,22 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
 {
     public class Repository<T> : IRepository<T> where T : MongoEntity
     {
-        private readonly IMongoDbContext _context;
+        private readonly IMongoDatabase _database;
         private readonly IMongoCollection<T> _collection;
 
         public Repository(IMongoDbContext mongoDbContext)
         {
-            _context = mongoDbContext;
-            _collection = mongoDbContext.Database.GetCollection<T>(typeof(T).Name);
+            var databaseAttribute = typeof(T)
+                .GetCustomAttributes(false)
+                .FirstOrDefault(attr => attr.GetType().Equals(typeof(MongoDatabaseAttribute)));
+
+            if(databaseAttribute == null)
+                throw new Exception(MongoDbConstants.DatabaseNotFoundMessage);
+
+            var databaseName = ((MongoDatabaseAttribute) databaseAttribute).Name;
+
+            if(mongoDbContext.Databases.TryGetValue(databaseName, out _database))
+            _collection = _database.GetCollection<T>(typeof(T).Name);
         }
 
         public async Task Create(T entity)

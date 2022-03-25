@@ -3,12 +3,12 @@
 namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
 {
     [MongoDatabase("Library")]
-    public class Student : MongoEntity
+    public class Book : MongoEntity
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
 
-        public string Surname { get; set; }
+        public string Author { get; set; }
 
-        public Subject Subject { get; set; }
+        public double Price { get; set; }
     }
 }
