@@ -13,7 +13,7 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
         Task<IEnumerable<T>> Get(Expression<Func<T, bool>> expression);
         Task<T> Get(string id);
 
-        Task Update(T entity);
+        //Task Update(T entity);
         Task<T> Update(FilterDefinition<T> filter, UpdateDefinition<T> update);
 
         Task<T> Replace(T entity);

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Devon4Net.Infrastructure.MongoDb.Common;
 
 namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
 {
+    [MongoDatabase("School")]
     public class Subject
     {
         public string Name { get; set; }

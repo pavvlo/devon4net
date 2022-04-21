@@ -7,19 +7,17 @@ namespace Devon4Net.Infrastructure.MongoDb.MongoDb
 {
     public class MongoDbContext : IMongoDbContext
     {
-        public IDictionary<string, IMongoDatabase> Databases { get; set; }
+        private readonly MongoDbOptions Options;
 
         public MongoDbContext(IOptions<MongoDbOptions> options)
         {
-            foreach(var database in options.Value.Databases)
-                AddDatabase(database.DatabaseName, database.ConnectionString);
+            Options = options.Value;
         }
 
-        public bool AddDatabase(string name, string connection)
+        public IMongoDatabase GetDatabase(string name)
         {
-            if(Databases == null) Databases = new Dictionary<string, IMongoDatabase>();
-            var database = new MongoClient(connection).GetDatabase(name);
-            return Databases.TryAdd(name, database);
+            var database = Options.Databases.FirstOrDefault(d => d.DatabaseName == name);
+            return new MongoClient(database.ConnectionString).GetDatabase(name);
         }
     }
 }

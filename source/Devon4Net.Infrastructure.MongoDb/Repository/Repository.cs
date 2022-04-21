@@ -17,12 +17,12 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
                 .GetCustomAttributes(false)
                 .FirstOrDefault(attr => attr.GetType().Equals(typeof(MongoDatabaseAttribute)));
 
-            if(databaseAttribute == null)
+            if (databaseAttribute == null) 
                 throw new Exception(MongoDbConstants.DatabaseNotFoundMessage);
 
-            var databaseName = ((MongoDatabaseAttribute) databaseAttribute).Name;
+            var databaseName = ((MongoDatabaseAttribute)databaseAttribute).Name;
 
-            if(mongoDbContext.Databases.TryGetValue(databaseName, out _database))
+            _database = mongoDbContext.GetDatabase(databaseName);
             _collection = _database.GetCollection<T>(typeof(T).Name);
         }
 
@@ -69,27 +69,29 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
             return result;
         }
 
+        #region
         // TODO continue working on this abobination
-        public async Task Update(T entity)
-        {
-            var query = await _collection.FindAsync(e => e.Id == entity.Id).ConfigureAwait(false);
-            var old = query.FirstOrDefault();
-            await Replace((T)UpdateNonNullProperties(entity, old));
-        }
-        private static object UpdateNonNullProperties(object newEntity, object oldEntity)
-        {
-            foreach (var property in newEntity.GetType().GetProperties())
-            {
-                if (property.PropertyType.IsClass && !property.PropertyType.FullName.StartsWith("System."))
-                {
-                   var result = UpdateNonNullProperties(property.GetGetMethod().Invoke(newEntity,null), property.GetGetMethod().Invoke(oldEntity, null));
-                   property.SetValue(oldEntity, result);
-                }
-                else if (property.GetValue(newEntity) != null)
-                    property.SetValue(oldEntity, property.GetValue(newEntity));
-            }
-            return oldEntity;
-        }
+        //public async Task Update(T entity)
+        //{
+        //    var query = await _collection.FindAsync(e => e.Id == entity.Id).ConfigureAwait(false);
+        //    var old = query.FirstOrDefault();
+        //    await Replace((T)UpdateNonNullProperties(entity, old));
+        //}
+        //private static object UpdateNonNullProperties(object newEntity, object oldEntity)
+        //{
+        //    foreach (var property in newEntity.GetType().GetProperties())
+        //    {
+        //        if (property.PropertyType.IsClass && !property.PropertyType.FullName.StartsWith("System."))
+        //        {
+        //           var result = UpdateNonNullProperties(property.GetGetMethod().Invoke(newEntity,null), property.GetGetMethod().Invoke(oldEntity, null));
+        //           property.SetValue(oldEntity, result);
+        //        }
+        //        else if (property.GetValue(newEntity) != null)
+        //            property.SetValue(oldEntity, property.GetValue(newEntity));
+        //    }
+        //    return oldEntity;
+        //}
+        #endregion 
 
         public async Task<T> Update(FilterDefinition<T> filter, UpdateDefinition<T> update)
         {

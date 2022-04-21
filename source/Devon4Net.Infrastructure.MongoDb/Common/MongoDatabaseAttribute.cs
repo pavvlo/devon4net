@@ -1,6 +1,8 @@
-﻿namespace Devon4Net.Infrastructure.MongoDb.Common
+﻿
+
+namespace Devon4Net.Infrastructure.MongoDb.Common
 {
-    [AttributeUsage(AttributeTargets.Class)]  
+    [AttributeUsage(AttributeTargets.Class)]
     public class MongoDatabaseAttribute : Attribute
     {
         private string _name;
