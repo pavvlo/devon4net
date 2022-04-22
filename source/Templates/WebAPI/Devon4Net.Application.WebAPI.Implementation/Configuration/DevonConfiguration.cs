@@ -4,6 +4,7 @@ using Devon4Net.Application.WebAPI.Implementation.Business.MediatRManagement.Com
 using Devon4Net.Application.WebAPI.Implementation.Business.MediatRManagement.Dto;
 using Devon4Net.Application.WebAPI.Implementation.Business.MediatRManagement.Handlers;
 using Devon4Net.Application.WebAPI.Implementation.Business.MediatRManagement.Queries;
+using Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement;
 using Devon4Net.Application.WebAPI.Implementation.Business.RabbitMqManagement.Handlers;
 using Devon4Net.Application.WebAPI.Implementation.Business.TodoManagement.Validators;
 using Devon4Net.Application.WebAPI.Implementation.Domain.Database;
@@ -45,6 +46,7 @@ namespace Devon4Net.Application.WebAPI.Implementation.Configuration
             SetupDatabase(services, configuration);
             SetupJwtPolicies(services);
             SetupFluentValidators(services);
+            SetupMongoContext(services);
 
             using var serviceProvider = services.BuildServiceProvider();
 
@@ -79,6 +81,12 @@ namespace Devon4Net.Application.WebAPI.Implementation.Configuration
         {
             services.AddFluentValidation<TodosFluentValidator>(true);
             services.AddFluentValidation<EmployeeFluentValidator>(true);
+        }
+
+        private static void SetupMongoContext(IServiceCollection services)
+        {
+            services.AddSingleton(typeof(SchoolContext));
+            services.AddSingleton(typeof(LibraryContext));
         }
 
         /// <summary>

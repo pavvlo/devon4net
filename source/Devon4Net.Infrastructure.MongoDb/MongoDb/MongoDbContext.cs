@@ -1,23 +1,26 @@
 ﻿
 using Devon4Net.Infrastructure.Common.Options.MongoDb;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Devon4Net.Infrastructure.MongoDb.MongoDb
 {
-    public class MongoDbContext : IMongoDbContext
+    public class MongoDbContext: IMongoDbContext
     {
         private readonly MongoDbOptions Options;
 
-        public MongoDbContext(IOptions<MongoDbOptions> options)
+        public IMongoDatabase Database { get; set; }
+
+        public MongoDbContext(IServiceProvider services)
         {
-            Options = options.Value;
+            Options = services.GetService<IOptions<MongoDbOptions>>().Value;
         }
 
-        public IMongoDatabase GetDatabase(string name)
+        public void ConfigureDatabase(string name)
         {
             var database = Options.Databases.FirstOrDefault(d => d.DatabaseName == name);
-            return new MongoClient(database.ConnectionString).GetDatabase(name);
+            Database = new MongoClient(database.ConnectionString).GetDatabase(name);
         }
     }
 }

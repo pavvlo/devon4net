@@ -6,23 +6,15 @@ using System.Linq.Expressions;
 
 namespace Devon4Net.Infrastructure.MongoDb.Repository
 {
-    public class Repository<T> : IRepository<T> where T : MongoEntity
+    public class MongoDbRepository<T, TContext> : IMongoDbRepository<T, TContext> where T : MongoEntity where TContext : MongoDbContext
     {
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<T> _collection;
 
-        public Repository(IMongoDbContext mongoDbContext)
+        public MongoDbRepository(IServiceProvider serviceProvider)
         {
-            var databaseAttribute = typeof(T)
-                .GetCustomAttributes(false)
-                .FirstOrDefault(attr => attr.GetType().Equals(typeof(MongoDatabaseAttribute)));
-
-            if (databaseAttribute == null) 
-                throw new Exception(MongoDbConstants.DatabaseNotFoundMessage);
-
-            var databaseName = ((MongoDatabaseAttribute)databaseAttribute).Name;
-
-            _database = mongoDbContext.GetDatabase(databaseName);
+            var service = serviceProvider.GetService(typeof(TContext));
+            _database = ((MongoDbContext)service).Database;
             _collection = _database.GetCollection<T>(typeof(T).Name);
         }
 

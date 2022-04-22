@@ -520,7 +520,7 @@
             </summary>
             <param name="todoId"></param>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.BookController.#ctor(Devon4Net.Infrastructure.MongoDb.Repository.IRepository{Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Book})">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.BookController.#ctor(Devon4Net.Infrastructure.MongoDb.Repository.IMongoDbRepository{Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Book,Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.LibraryContext})">
             <summary>
             Constructor
             </summary>
@@ -538,7 +538,7 @@
             TODOs controller
             </summary>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.#ctor(Devon4Net.Infrastructure.MongoDb.Repository.IRepository{Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student})">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.StudentController.#ctor(Devon4Net.Infrastructure.MongoDb.Repository.IMongoDbRepository{Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.Student,Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement.SchoolContext})">
             <summary>
             Constructor
             </summary>

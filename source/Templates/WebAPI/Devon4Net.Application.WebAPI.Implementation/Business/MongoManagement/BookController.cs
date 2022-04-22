@@ -9,7 +9,7 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
     [Route("[controller]")]
     public class BookController : ControllerBase
     {
-        private readonly IRepository<Book> _bookRepository;
+        private readonly IMongoDbRepository<Book, LibraryContext> _bookRepository;
 
         /// <summary>
         /// Constructor
@@ -17,7 +17,7 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
         /// <param name="bookRepository"></param>
         /// 
 
-        public BookController(IRepository<Book> bookRepository)
+        public BookController(IMongoDbRepository<Book, LibraryContext> bookRepository)
         {
             _bookRepository = bookRepository;
         }

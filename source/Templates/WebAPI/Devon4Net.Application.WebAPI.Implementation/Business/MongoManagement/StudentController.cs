@@ -13,7 +13,7 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
-        private readonly IRepository<Student> _studentRepository;
+        private readonly IMongoDbRepository<Student, SchoolContext> _studentRepository;
 
         /// <summary>
         /// Constructor
@@ -21,7 +21,7 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
         /// <param name="studentRepository"></param>
         /// 
 
-        public StudentController(IRepository<Student> studentRepository)
+        public StudentController(IMongoDbRepository<Student, SchoolContext> studentRepository)
         {
             _studentRepository = studentRepository;
         }
@@ -69,7 +69,7 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
         {
             Devon4NetLogger.Debug("Executing GetTodo from controller TodoController");
             await _studentRepository.Create(students);
-            return Ok("Se ha creado " + students.Count() + "estudiantes");
+            return Ok("Se ha creado " + students.Count() + " estudiantes");
         }
 
         /// <summary>

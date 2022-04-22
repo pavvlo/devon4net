@@ -1,10 +1,11 @@
 ﻿using Devon4Net.Infrastructure.MongoDb.Common;
+using Devon4Net.Infrastructure.MongoDb.MongoDb;
 using MongoDB.Driver;
 using System.Linq.Expressions;
 
 namespace Devon4Net.Infrastructure.MongoDb.Repository
 {
-    public interface IRepository<T> where T : MongoEntity
+    public interface IMongoDbRepository<T, TContext> where T : MongoEntity where TContext : MongoDbContext
     {
         Task Create(T entity);
         Task Create(IEnumerable<T> entityCollection);

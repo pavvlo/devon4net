@@ -2,7 +2,6 @@
 
 namespace Devon4Net.Application.WebAPI.Implementation.Business.MongoManagement
 {
-    [MongoDatabase("Library")]
     public class Book : MongoEntity
     {
         public string Title { get; set; }
