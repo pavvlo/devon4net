@@ -5,7 +5,6 @@ namespace Devon4Net.Infrastructure.MongoDb.MongoDb
 {
     public interface IMongoDbContext
     {
-        IMongoDatabase Database { get; set; }
-        void ConfigureDatabase(string name); 
+        IMongoDatabase Database { get; }
     }
 }

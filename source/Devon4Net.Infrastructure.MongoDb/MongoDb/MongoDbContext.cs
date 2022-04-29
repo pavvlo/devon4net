@@ -8,19 +8,10 @@ namespace Devon4Net.Infrastructure.MongoDb.MongoDb
 {
     public class MongoDbContext: IMongoDbContext
     {
-        private readonly MongoDbOptions Options;
-
         public IMongoDatabase Database { get; set; }
 
-        public MongoDbContext(IServiceProvider services)
+        public MongoDbContext()
         {
-            Options = services.GetService<IOptions<MongoDbOptions>>().Value;
-        }
-
-        public void ConfigureDatabase(string name)
-        {
-            var database = Options.Databases.FirstOrDefault(d => d.DatabaseName == name);
-            Database = new MongoClient(database.ConnectionString).GetDatabase(name);
         }
     }
 }

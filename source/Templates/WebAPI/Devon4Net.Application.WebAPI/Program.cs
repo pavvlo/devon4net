@@ -35,8 +35,8 @@ builder.Services.SetupRabbitMq(builder.Configuration);
 builder.Services.SetupMediatR(builder.Configuration);
 builder.Services.SetupKafka(builder.Configuration);
 builder.Services.SetupGrpc(builder.Configuration);
-builder.Services.SetupDevonDependencyInjection(builder.Configuration);
 builder.Services.SetupMongoDb(builder.Configuration);
+builder.Services.SetupDevonDependencyInjection(builder.Configuration);
 #endregion
 
 var app = builder.Build();

@@ -13,9 +13,17 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
 
         public MongoDbRepository(IServiceProvider serviceProvider)
         {
-            var service = serviceProvider.GetService(typeof(TContext));
-            _database = ((MongoDbContext)service).Database;
+            _database = GetDatabaseFromServices(serviceProvider);
             _collection = _database.GetCollection<T>(typeof(T).Name);
+        }
+
+        private IMongoDatabase GetDatabaseFromServices(IServiceProvider serviceProvider)
+        {
+            var service = serviceProvider.GetService(typeof(TContext));
+            if (service == null)
+                throw new ContextNotFoundException(string.Format(MongoDbConstants.ContextNotFoundMessage, typeof(TContext).FullName));
+            
+            return (service as TContext).Database;
         }
 
         public async Task Create(T entity)
@@ -41,12 +49,10 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
             return await result.ToListAsync().ConfigureAwait(false);
         }
 
-        // TODO check if not found
         public async Task<T> Get(string id)
         {
             var result = await Get(e => e.Id == id);
-            //if (result.Count != 1) 
-            return result.First();
+            return result.FirstOrDefault();
         }
 
         public async Task<T> Replace(T entity)
@@ -60,30 +66,6 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
             var result = await _collection.FindOneAndReplaceAsync(expression, entity).ConfigureAwait(false);
             return result;
         }
-
-        #region
-        // TODO continue working on this abobination
-        //public async Task Update(T entity)
-        //{
-        //    var query = await _collection.FindAsync(e => e.Id == entity.Id).ConfigureAwait(false);
-        //    var old = query.FirstOrDefault();
-        //    await Replace((T)UpdateNonNullProperties(entity, old));
-        //}
-        //private static object UpdateNonNullProperties(object newEntity, object oldEntity)
-        //{
-        //    foreach (var property in newEntity.GetType().GetProperties())
-        //    {
-        //        if (property.PropertyType.IsClass && !property.PropertyType.FullName.StartsWith("System."))
-        //        {
-        //           var result = UpdateNonNullProperties(property.GetGetMethod().Invoke(newEntity,null), property.GetGetMethod().Invoke(oldEntity, null));
-        //           property.SetValue(oldEntity, result);
-        //        }
-        //        else if (property.GetValue(newEntity) != null)
-        //            property.SetValue(oldEntity, property.GetValue(newEntity));
-        //    }
-        //    return oldEntity;
-        //}
-        #endregion 
 
         public async Task<T> Update(FilterDefinition<T> filter, UpdateDefinition<T> update)
         {
