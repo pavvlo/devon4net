@@ -2,7 +2,7 @@
 using Devon4Net.Infrastructure.Test;
 
 
-namespace Devon4Net.Application.XUnit.Test.UnitTest
+namespace Devon4Net.Application.XUnit.Test.UnitTests
 {
     public class UnitTest : BaseManagementTest
     {
@@ -10,7 +10,7 @@ namespace Devon4Net.Application.XUnit.Test.UnitTest
         {
             var mockMapper = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new AutomapperProfile());
+                cfg.AddProfile(new AutoMapperProfile());
             });
             Mapper = mockMapper.CreateMapper();
         }

@@ -2,7 +2,7 @@
 
 namespace Devon4Net.Infrastructure.Test
 {
-    public abstract class DatabaseManagementTest<T> : BaseManagementTest, IDisposable where T : DbContext
+    public abstract class DatabaseManagementTest<T> : BaseManagementTest where T : DbContext
     {
         public T Context { get; set; }
 
@@ -11,10 +11,11 @@ namespace Devon4Net.Infrastructure.Test
         public DatabaseManagementTest()
         {
             ConfigureContext();
+            SeedData();
         }
 
-        public void Dispose() => Context.Dispose();
-
         public abstract void ConfigureContext();
+
+        public abstract void SeedData();
     }
 }

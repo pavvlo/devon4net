@@ -1,12 +1,13 @@
 ﻿using Xunit;
+
 /// <summary>
 /// You can create your unit test using this class
 /// </summary>
-namespace Devon4Net.Application.XUnit.Test.UnitTest.Management
+namespace Devon4Net.Application.XUnit.Test.UnitTests.Management
 {
-    public class ManagementTest:  UnitTest
+    public class SampleManagementTest : UnitTest
     {
-        public ManagementTest()
+        public SampleManagementTest()
         {
         }
 
@@ -19,24 +20,31 @@ namespace Devon4Net.Application.XUnit.Test.UnitTest.Management
         [Fact]
         public void FailingTest()
         {
-            Assert.Equal(5, Add(2, 2));
+            Assert.NotEqual(5, Add(2, 2));
         }
 
-        int Add(int x, int y)
-        {
-            return x + y;
-        }
 
         [Theory]
         [InlineData(3)]
         [InlineData(5)]
-        [InlineData(6)]
         public void MyFirstTheory(int value)
         {
             Assert.True(IsOdd(value));
         }
 
-        bool IsOdd(int value)
+        [Theory]
+        [InlineData(6)]
+        public void MySecondTheory(int value)
+        {
+            Assert.False(IsOdd(value));
+        }
+
+        private int Add(int x, int y)
+        {
+            return x + y;
+        }
+
+        private bool IsOdd(int value)
         {
             return value % 2 != 0;
         }

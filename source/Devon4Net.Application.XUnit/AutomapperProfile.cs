@@ -2,12 +2,12 @@
 
 namespace Devon4Net.Application.XUnit
 {
-    public class AutomapperProfile : Profile 
+    public class AutoMapperProfile : Profile
     {
         /// <summary>
-        /// Put automapper profile here
+        /// Put your automapper profiles here
         /// </summary>
-        public AutomapperProfile()
+        public AutoMapperProfile()
         {
 
         }

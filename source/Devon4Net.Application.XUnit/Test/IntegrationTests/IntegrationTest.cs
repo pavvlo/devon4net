@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
+using Devon4Net.Application.XUnit.Database;
+using Devon4Net.Infrastructure.Test;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Devon4Net.Infrastructure.Test;
 using System;
 using System.IO;
-using Devon4Net.Application.XUnit.Database;
-using Devon4Net.Application.XUnit;
 
-namespace Devon4Net.Application.NUnit.Test.Integration
+namespace Devon4Net.Application.XUnit.Test.IntegrationTests
 {
     public class IntegrationTest : DatabaseManagementTest<ModelContext>
     {
@@ -32,9 +31,14 @@ namespace Devon4Net.Application.NUnit.Test.Integration
         {
             var mockMapper = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new AutomapperProfile());
+                cfg.AddProfile(new AutoMapperProfile());
             });
-           Mapper = mockMapper.CreateMapper();
+            Mapper = mockMapper.CreateMapper();
+        }
+
+        public override void SeedData()
+        {
+            throw new NotImplementedException();
         }
     }
 }

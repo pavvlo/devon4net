@@ -11,7 +11,6 @@ namespace Devon4Net.Application.XUnit.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
         }
     }
 }
