@@ -113,11 +113,12 @@
             Employees controller
             </summary>
         </member>
-        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Controllers.EmployeeController.#ctor(Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Service.IEmployeeService)">
+        <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Controllers.EmployeeController.#ctor(Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Service.IEmployeeService,Microsoft.Extensions.Caching.Distributed.IDistributedCache)">
             <summary>
             Constructor
             </summary>
             <param name="employeeService"></param>
+            <param name="distributedCache"></param>
         </member>
         <member name="M:Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Controllers.EmployeeController.GetEmployee">
             <summary>

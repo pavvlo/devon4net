@@ -5,6 +5,8 @@ using Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Dt
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Devon4Net.Infrastructure.Cache.Helpers;
 
 namespace Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagement.Controllers
 {
@@ -17,14 +19,17 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagemen
     public class EmployeeController: ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IDistributedCache _distributedCache;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="employeeService"></param>
-        public EmployeeController( IEmployeeService employeeService)
+        /// <param name="distributedCache"></param>
+        public EmployeeController( IEmployeeService employeeService, IDistributedCache distributedCache)
         {
             _employeeService = employeeService;
+            _distributedCache = distributedCache;
         }
 
         /// <summary>
@@ -38,8 +43,15 @@ namespace Devon4Net.Application.WebAPI.Implementation.Business.EmployeeManagemen
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> GetEmployee()
         {
+            await _distributedCache.RefreshAsync("Employee_getAll");
             Devon4NetLogger.Debug("Executing GetEmployee from controller EmployeeController");
-            return Ok(await _employeeService.GetEmployee().ConfigureAwait(false));
+            var result = (await _distributedCache.GetAsync("Employee_getAll").ConfigureAwait(false)).FromByteArray<IEnumerable<EmployeeDto>>();
+            if (result == null)
+            {
+                result = await _employeeService.GetEmployee().ConfigureAwait(false);
+                await _distributedCache.SetAsync("Employee_getAll", result.ToByteArray()).ConfigureAwait(false);
+            }
+            return Ok(result);
         }
 
         /// <summary>
