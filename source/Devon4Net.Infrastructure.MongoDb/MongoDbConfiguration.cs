@@ -28,7 +28,7 @@ namespace Devon4Net.Infrastructure.MongoDb
             if (MongoOptions == null || !MongoOptions.UseMongo || MongoOptions.Databases == null || MongoOptions.Databases.Count() == 0) return;
             var databaseOptions = MongoOptions.Databases.FirstOrDefault(d => d.DatabaseName == databaseName);
             if (databaseOptions == null)
-                throw new ContextNotFoundException(MongoDbConstants.DatabaseNotFoundMessage);
+                throw new MongoDbException(MongoDbConstants.DatabaseNotFoundMessage);
 
             var context = (T) Activator.CreateInstance(typeof(T));
             context.Database = new MongoClient(databaseOptions.ConnectionString).GetDatabase(databaseName);

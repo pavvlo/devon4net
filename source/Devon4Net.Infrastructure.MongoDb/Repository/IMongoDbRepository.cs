@@ -10,8 +10,7 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
         Task Create(T entity);
         Task Create(IEnumerable<T> entityCollection);
 
-        Task<IEnumerable<T>> Get();
-        Task<IEnumerable<T>> Get(Expression<Func<T, bool>> expression);
+        Task<IEnumerable<T>> Get(Expression<Func<T, bool>> expression = null);
         Task<T> Get(string id);
 
         //Task Update(T entity);
@@ -25,7 +24,7 @@ namespace Devon4Net.Infrastructure.MongoDb.Repository
         Task<long> Delete(Expression<Func<T, bool>> expression);
         Task<T> Delete(string id);
 
-        Task<long> Count(Expression<Func<T, bool>>? expression = null);
+        Task<long> Count(Expression<Func<T, bool>> expression = null);
         Task<long> EstimateCount();
 
     }
