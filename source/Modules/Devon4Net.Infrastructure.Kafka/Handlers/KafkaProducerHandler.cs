@@ -7,10 +7,10 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers
     public class KafkaProducerHandler<T, TV> : IKafkaProducerHandler<T, TV> where T : class where TV : class
     {
         protected IServiceCollection Services { get; set; }
-        private IKakfkaHandler KafkaHandler { get; }
+        private IKafkaHandler KafkaHandler { get; }
         private string ProducerId { get; }
 
-        public KafkaProducerHandler(IServiceCollection services, IKakfkaHandler kafkaHandler, string producerId)
+        public KafkaProducerHandler(IServiceCollection services, IKafkaHandler kafkaHandler, string producerId)
         {
             Services = services;
             KafkaHandler = kafkaHandler;

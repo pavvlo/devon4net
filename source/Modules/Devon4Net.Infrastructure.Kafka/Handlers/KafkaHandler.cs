@@ -8,11 +8,11 @@ using Microsoft.Extensions.Options;
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers
 {
-    public class KakfkaHandler : IKakfkaHandler
+    public class KafkaHandler : IKafkaHandler
     {
         private KafkaOptions KafkaOptions { get; }
 
-        public KakfkaHandler(IOptions<KafkaOptions> kafkaOptions)
+        public KafkaHandler(IOptions<KafkaOptions> kafkaOptions)
         {
             KafkaOptions = kafkaOptions?.Value;
         }
@@ -83,7 +83,7 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers
 
         private static ProducerConfig GetDefaultKafkaProducerConfiguration(Producer producer)
         {
-            var result =  new ProducerConfig
+            var result = new ProducerConfig
             {
                 BootstrapServers = producer.Servers,
                 ClientId = producer.ClientId,
@@ -154,7 +154,7 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers
 
         private static ConsumerConfig GetDefaultKafkaConsumerConfiguration(Consumer consumer)
         {
-            var result =  new ConsumerConfig
+            var result = new ConsumerConfig
             {
                 BootstrapServers = consumer.Servers,
                 ClientId = consumer.ClientId,
@@ -184,7 +184,7 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers
             using var adminClient = GetAdminClientBuilder(adminId);
             try
             {
-                await adminClient.CreateTopicsAsync(new[] {new TopicSpecification { Name = topicName, ReplicationFactor = replicationFactor, NumPartitions = numPartitions } }).ConfigureAwait(false);
+                await adminClient.CreateTopicsAsync(new[] { new TopicSpecification { Name = topicName, ReplicationFactor = replicationFactor, NumPartitions = numPartitions } }).ConfigureAwait(false);
                 return true;
             }
             catch (CreateTopicsException ex)

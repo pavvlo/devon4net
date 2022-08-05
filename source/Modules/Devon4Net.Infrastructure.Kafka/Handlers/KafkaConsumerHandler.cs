@@ -1,5 +1,4 @@
-﻿using Confluent.Kafka;
-using Devon4Net.Infrastructure.Logger.Logging;
+﻿using Devon4Net.Infrastructure.Logger.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers
@@ -7,14 +6,14 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers
     public abstract class KafkaConsumerHandler<T, TV> : IKafkaConsumerHandler where T : class where TV : class
     {
         public abstract void HandleCommand(T key, TV value);
-        private IKakfkaHandler KafkaHandler { get; }
+        private IKafkaHandler KafkaHandler { get; }
         private bool EnableConsumerFlag { get; set; }
         private bool Commit { get; }
         private int CommitPeriod { get; }
         private string ConsumerId { get; }
         protected IServiceCollection Services { get; set; }
 
-        protected KafkaConsumerHandler(IServiceCollection services, IKakfkaHandler kafkaHandler, string consumerId, bool commit = false, int commitPeriod = 5)
+        protected KafkaConsumerHandler(IServiceCollection services, IKafkaHandler kafkaHandler, string consumerId, bool commit = false, int commitPeriod = 5)
         {
             Services = services;
             KafkaHandler = kafkaHandler;

@@ -15,14 +15,14 @@ namespace Devon4Net.Application.Kafka.Business.Controllers
     public class KafkaController : ControllerBase
     {
         private MessageProducerHandler MessageProducer { get; }
-        private IKakfkaHandler KafkaHandler { get; }
+        private IKafkaHandler KafkaHandler { get; }
 
         /// <summary>
         /// KafkaController constructor
         /// </summary>
         /// <param name="messageProducer"></param>
         /// <param name="kafkaHandler"></param>
-        public KafkaController(MessageProducerHandler messageProducer, IKakfkaHandler kafkaHandler)
+        public KafkaController(MessageProducerHandler messageProducer, IKafkaHandler kafkaHandler)
         {
             MessageProducer = messageProducer;
             KafkaHandler = kafkaHandler;
@@ -36,7 +36,7 @@ namespace Devon4Net.Application.Kafka.Business.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(DeliveryResult<string,string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DeliveryResult<string, string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -81,7 +81,7 @@ namespace Devon4Net.Application.Kafka.Business.Controllers
         public async Task<IActionResult> DeleteTopicMessage(string topicName)
         {
             Devon4NetLogger.Debug("Executing DeleteTopicMessage from controller KafkaController");
-            return Ok(await KafkaHandler.DeleteTopic("Admin1", new List<string>{ topicName }).ConfigureAwait(false));
+            return Ok(await KafkaHandler.DeleteTopic("Admin1", new List<string> { topicName }).ConfigureAwait(false));
         }
     }
 }

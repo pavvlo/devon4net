@@ -2,7 +2,7 @@
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers
 {
-    public interface IKakfkaHandler
+    public interface IKafkaHandler
     {
         IProducer<T, TV> GetProducerBuilder<T, TV>(string producerId) where T : class where TV : class;
         IConsumer<T, TV> GetConsumerBuilder<T, TV>(string consumerId) where T : class where TV : class;

@@ -14,7 +14,7 @@ namespace Devon4Net.Infrastructure.Kafka
 
             if (kafkaOptions?.EnableKafka != true || kafkaOptions.Producers?.Any() != true) return;
 
-            services.AddTransient(typeof(IKakfkaHandler), typeof(KakfkaHandler));
+            services.AddTransient(typeof(IKafkaHandler), typeof(KafkaHandler));
         }
 
         public static void AddKafkaConsumer<T>(this IServiceCollection services, string consumerId, bool commit = false, int commitPeriod = 5) where T : class
@@ -26,7 +26,7 @@ namespace Devon4Net.Infrastructure.Kafka
             }
 
             using var sp = services.BuildServiceProvider();
-            var kafHandler = sp.GetService<IKakfkaHandler>();
+            var kafHandler = sp.GetService<IKafkaHandler>();
 
             var obj = (T)Activator.CreateInstance(typeof(T), services, kafHandler, consumerId, commit, commitPeriod);
 
@@ -42,11 +42,12 @@ namespace Devon4Net.Infrastructure.Kafka
             }
 
             using var sp = services.BuildServiceProvider();
-            var kafHandler = sp.GetService<IKakfkaHandler>();
+            var kafHandler = sp.GetService<IKafkaHandler>();
 
             var obj = (T)Activator.CreateInstance(typeof(T), services, kafHandler, producerId);
 
             services.AddSingleton(obj);
         }
+
     }
 }
