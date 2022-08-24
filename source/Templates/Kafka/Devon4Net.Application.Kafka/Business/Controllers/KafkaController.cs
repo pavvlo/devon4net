@@ -44,7 +44,7 @@ namespace Devon4Net.Application.Kafka.Business.Controllers
         public async Task<IActionResult> DeliverMessage(string key, string value)
         {
             Devon4NetLogger.Debug("Executing DeliverMessage from controller KafkaController");
-            var result = await MessageProducer.SendMessage(key, value).ConfigureAwait(false);
+            var result = await MessageProducer.SendMessage(key, null).ConfigureAwait(false);
             return Ok(result);
         }
 
