@@ -8,7 +8,7 @@
 
         public string ClientId { get; set; }
 
-        public string Password { get; set; }
+        public string GrantType { get; set; }
 
         public string Audience { get { return ClientId; } }
 

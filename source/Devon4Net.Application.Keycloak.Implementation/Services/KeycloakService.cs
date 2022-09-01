@@ -23,7 +23,7 @@ namespace Devon4Net.Application.Keycloak.Implementation.Services
                     new ("username", username),
                     new ("password", password),
                     new ("client_id", _options.ClientId),
-                    new ("grant_type", _options.Password)
+                    new ("grant_type", _options.GrantType)
                 };
 
                 using (var content = new FormUrlEncodedContent(parameters))
