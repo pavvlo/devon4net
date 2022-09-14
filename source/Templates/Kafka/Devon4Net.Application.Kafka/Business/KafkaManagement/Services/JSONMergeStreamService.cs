@@ -28,7 +28,7 @@ namespace Devon4Net.Application.Kafka.Business.KafkaManagement.Services
                    })
                .ToStream()
                .Peek((k, v) => Console.WriteLine($"Stream says -> Key: [{k}] , Value: [{v}]"))
-               .To("exit");
+               .To("output");
         }
     }
 }

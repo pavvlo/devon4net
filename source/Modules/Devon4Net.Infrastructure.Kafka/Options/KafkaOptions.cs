@@ -6,7 +6,7 @@
         public List<Administration> Administration { get; set; }
         public List<Producer> Producers { get; set; }
         public List<Consumer> Consumers { get; set; }
-        public List<Stream> Streams { get; set; }
+        public List<StreamOptions> Streams { get; set; }
 
 
     }

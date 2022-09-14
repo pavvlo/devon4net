@@ -15,16 +15,19 @@ namespace Devon4Net.Application.Kafka.Business.Controllers
     public class KafkaController : ControllerBase
     {
         private MessageProducerHandler MessageProducer { get; }
+        private MessageProducerHandler2 MessageProducer2 { get; }
         private IKafkaHandler KafkaHandler { get; }
 
         /// <summary>
         /// KafkaController constructor
         /// </summary>
         /// <param name="messageProducer"></param>
+        /// <param name="messageProducer2"></param>
         /// <param name="kafkaHandler"></param>
-        public KafkaController(MessageProducerHandler messageProducer, IKafkaHandler kafkaHandler)
+        public KafkaController(MessageProducerHandler messageProducer, MessageProducerHandler2 messageProducer2, IKafkaHandler kafkaHandler)
         {
             MessageProducer = messageProducer;
+            MessageProducer2 = messageProducer2;
             KafkaHandler = kafkaHandler;
         }
 
@@ -45,6 +48,27 @@ namespace Devon4Net.Application.Kafka.Business.Controllers
         {
             Devon4NetLogger.Debug("Executing DeliverMessage from controller KafkaController");
             var result = await MessageProducer.SendMessage(key, value).ConfigureAwait(false);
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Delivers a Kafka message
+        /// </summary>
+        /// <param name="key">message key</param>
+        /// <param name="value">message value</param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(DeliveryResult<string, string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Route("/v1/kafka/deliver2")]
+        public async Task<IActionResult> DeliverMessage2(string key, string value)
+        {
+            Devon4NetLogger.Debug("Executing DeliverMessage from controller KafkaController");
+            var result = await MessageProducer2.SendMessage(key, value).ConfigureAwait(false);
             return Ok(result);
         }
 

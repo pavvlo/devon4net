@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Devon4Net.Infrastructure.Kafka.Common.Const;
+using Devon4Net.Infrastructure.Kafka.Common.Extensions;
 using Devon4Net.Infrastructure.Kafka.Options;
 using Microsoft.Extensions.Hosting;
 using Streamiz.Kafka.Net;
@@ -9,17 +10,19 @@ using Streamiz.Kafka.Net.Stream;
 
 namespace Devon4Net.Infrastructure.Kafka.Streams.Services
 {
-    public abstract class KafkaStreamService<TInput, TOutput> : BackgroundService, IKafkaStreamService<TInput, TOutput> where TOutput : class where TInput : class
+    public abstract class KafkaStreamService<TInput, TOutput> : BackgroundService where TOutput : class where TInput : class
     {
         public string ApplicationId { get; set; }
-        public KafkaOptions KafkaOptions { get; set; }
+        public IStreamConfig Configuration { get; set; }
+        public StreamBuilder StreamBuilder { get; set; }
+        public StreamOptions StreamOptions { get; set; }
         public KafkaStream Stream { get; set; }
         public abstract void CreateStreamBuilder(ref IKStream<TInput, TOutput> stream);
 
         public KafkaStreamService(KafkaOptions kafkaOptions, string applicationId)
         {
             ApplicationId = applicationId;
-            KafkaOptions = kafkaOptions;
+            Configuration = GetConfigFromOptions(kafkaOptions);
             GenerateStreamBuilder();
         }
 
@@ -30,27 +33,40 @@ namespace Devon4Net.Infrastructure.Kafka.Streams.Services
 
         private void GenerateStreamBuilder()
         {
-            var streamBuilder = new StreamBuilder();
-            var stream = streamBuilder.Stream<TInput, TOutput>("input");
+            StreamBuilder = new StreamBuilder();
+            var topics = new List<string>(StreamOptions.GetTopics());
+
+            var stream = StreamBuilder.Stream<TInput, TOutput>(topics.PopOrDefault());
+
+            if (StreamOptions.AllowMultipleTopics) MergeMultipleStreams(ref stream, topics);
 
             CreateStreamBuilder(ref stream);
-            
-            Stream = new KafkaStream(streamBuilder.Build(), GetConfigFromOptions());
+
+            Stream = new KafkaStream(StreamBuilder.Build(), Configuration);
+        }
+
+        private void MergeMultipleStreams(ref IKStream<TInput, TOutput> stream, List<string> topics)
+        {
+            while (topics.Count > 0)
+            {
+                string topic = topics.PopOrDefault();
+                stream.Merge(StreamBuilder.Stream<TInput, TOutput>(topic));
+            }
         }
 
 
-        private IStreamConfig GetConfigFromOptions()
+        private IStreamConfig GetConfigFromOptions(KafkaOptions kafkaOptions)
         {
-            var streamOptions = KafkaOptions.Streams.Find(s => s.ApplicationId == ApplicationId);
+            StreamOptions = kafkaOptions.Streams.Find(s => s.ApplicationId == ApplicationId);
             var config = new StreamConfig<StringSerDes, StringSerDes>();
             
-            config.ApplicationId = streamOptions.ApplicationId;
-            config.BootstrapServers = streamOptions.Servers;
-            config.AutoOffsetReset = GetAutoOffsetReset(streamOptions.AutoOffsetReset);
-            config.StateDir = streamOptions.StateDir;
-            config.CommitIntervalMs = streamOptions.CommitIntervalMs ?? KafkaDefaultValues.StreamsCommitIntervalMs;
-            config.Guarantee = GetProcessingGuarantee(streamOptions.Guarantee);
-            config.MetricsRecording = GetMetricsRecordingLevel(streamOptions.MetricsRecording);
+            config.ApplicationId = StreamOptions.ApplicationId;
+            config.BootstrapServers = StreamOptions.Servers;
+            config.AutoOffsetReset = GetAutoOffsetReset(StreamOptions.AutoOffsetReset);
+            config.StateDir = StreamOptions.StateDir;
+            config.CommitIntervalMs = StreamOptions.CommitIntervalMs ?? KafkaDefaultValues.StreamsCommitIntervalMs;
+            config.Guarantee = GetProcessingGuarantee(StreamOptions.Guarantee);
+            config.MetricsRecording = GetMetricsRecordingLevel(StreamOptions.MetricsRecording);
 
             return config;
         }
