@@ -21,8 +21,7 @@ builder.Services.SetupSwagger(builder.Configuration);
 
 //KAFKA CONFIGURATION
 builder.Services.SetupKafka(builder.Configuration);
-//builder.Services.AddHostedService<ValueCountStreamService>();
-builder.Services.AddHostedService<JSONMergeStreamService>();
+builder.Services.AddKafkaStreamService<ValueCountStreamService>(builder.Configuration, "value_count_stream");
 builder.Services.AddKafkaProducer<MessageProducerHandler>("Producer1");
 builder.Services.AddKafkaConsumer<MessageConsumerHandler>("Consumer1");
 #endregion
