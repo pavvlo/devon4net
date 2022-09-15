@@ -1,5 +1,4 @@
-﻿
-using Devon4Net.Infrastructure.Kafka.Options;
+﻿using Devon4Net.Infrastructure.Kafka.Options;
 using Devon4Net.Infrastructure.Kafka.Streams.Services;
 using Streamiz.Kafka.Net.Stream;
 

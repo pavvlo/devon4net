@@ -1,9 +1,5 @@
-﻿using Devon4Net.Application.Kafka.Business.Model;
-using Devon4Net.Infrastructure.Kafka.Handlers;
-using Devon4Net.Infrastructure.Kafka.Options;
+﻿using Devon4Net.Infrastructure.Kafka.Options;
 using Devon4Net.Infrastructure.Kafka.Streams.Services;
-using Microsoft.Extensions.Options;
-using Streamiz.Kafka.Net;
 using Streamiz.Kafka.Net.Stream;
 
 namespace Devon4Net.Application.Kafka.Business.KafkaManagement.Services

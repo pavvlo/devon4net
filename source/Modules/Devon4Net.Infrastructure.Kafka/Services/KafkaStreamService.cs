@@ -12,11 +12,11 @@ namespace Devon4Net.Infrastructure.Kafka.Streams.Services
 {
     public abstract class KafkaStreamService<TInput, TOutput> : BackgroundService where TOutput : class where TInput : class
     {
-        public string ApplicationId { get; set; }
-        public IStreamConfig Configuration { get; set; }
-        public StreamBuilder StreamBuilder { get; set; }
-        public StreamOptions StreamOptions { get; set; }
-        public KafkaStream Stream { get; set; }
+        protected string ApplicationId { get; set; }
+        protected IStreamConfig Configuration { get; set; }
+        protected StreamBuilder StreamBuilder { get; set; }
+        protected StreamOptions StreamOptions { get; set; }
+        protected KafkaStream Stream { get; set; }
         public abstract void CreateStreamBuilder(ref IKStream<TInput, TOutput> stream);
 
         public KafkaStreamService(KafkaOptions kafkaOptions, string applicationId)
@@ -25,10 +25,20 @@ namespace Devon4Net.Infrastructure.Kafka.Streams.Services
             Configuration = GetConfigFromOptions(kafkaOptions);
             GenerateStreamBuilder();
         }
-
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await Stream.StartAsync();
+        }
+
+        public override void Dispose()
+        {
+            Stream.Dispose();
+            base.Dispose();
+        }
+
+        public async override Task StopAsync(CancellationToken cancellationToken)
+        {
+            await base.StopAsync(cancellationToken);
         }
 
         private void GenerateStreamBuilder()

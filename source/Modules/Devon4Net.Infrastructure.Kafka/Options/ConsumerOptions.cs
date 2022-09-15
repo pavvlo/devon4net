@@ -1,6 +1,6 @@
 ﻿namespace Devon4Net.Infrastructure.Kafka.Options
 {
-    public class Consumer
+    public class ConsumerOptions
     {
         public string ConsumerId { get; set; }
         public string Servers { get; set; }

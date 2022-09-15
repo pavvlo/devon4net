@@ -1,6 +1,6 @@
 ﻿namespace Devon4Net.Infrastructure.Kafka.Options
 {
-    public class Producer
+    public class ProducerOptions
     {
         public string ProducerId { get; set; }
         public string Servers { get; set; }

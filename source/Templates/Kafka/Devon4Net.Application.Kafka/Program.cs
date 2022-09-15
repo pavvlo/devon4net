@@ -22,9 +22,9 @@ builder.Services.SetupSwagger(builder.Configuration);
 //KAFKA CONFIGURATION
 builder.Services.SetupKafka(builder.Configuration);
 builder.Services.AddKafkaStreamService<ValueCountStreamService>(builder.Configuration, "value_count_stream");
-builder.Services.AddKafkaProducer<MessageProducerHandler>("Producer1");
-builder.Services.AddKafkaProducer<MessageProducerHandler2>("Producer2");
-builder.Services.AddKafkaConsumer<MessageConsumerHandler>("Consumer1");
+builder.Services.AddKafkaProducer<MessageProducerHandler>(builder.Configuration, "Producer1");
+builder.Services.AddKafkaProducer<MessageProducerHandler2>(builder.Configuration, "Producer2");
+builder.Services.AddKafkaConsumer<MessageConsumerHandler>(builder.Configuration, "Consumer1");
 #endregion
 
 var app = builder.Build();
