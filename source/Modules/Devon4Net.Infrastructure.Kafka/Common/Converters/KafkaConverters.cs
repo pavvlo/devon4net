@@ -1,4 +1,6 @@
 ﻿using Confluent.Kafka;
+using Streamiz.Kafka.Net;
+using Streamiz.Kafka.Net.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +54,25 @@ namespace Devon4Net.Infrastructure.Kafka.Common.Converters
                 "readuncommitted" => IsolationLevel.ReadUncommitted,
                 "readcommitted" => IsolationLevel.ReadCommitted,
                 _ => IsolationLevel.ReadCommitted
+            };
+        }
+
+        public static ProcessingGuarantee GetProcessingGuarantee(string processingGuarantee)
+        {
+            return processingGuarantee.ToLower() switch
+            {
+                "at_least_one" => ProcessingGuarantee.AT_LEAST_ONCE,
+                "exactly_one" => ProcessingGuarantee.EXACTLY_ONCE,
+                _ => ProcessingGuarantee.AT_LEAST_ONCE
+            };
+        }
+        public static MetricsRecordingLevel GetMetricsRecordingLevel(string metricsRecordingLevel)
+        {
+            return metricsRecordingLevel.ToLower() switch
+            {
+                "info" => MetricsRecordingLevel.INFO,
+                "debug" => MetricsRecordingLevel.DEBUG,
+                _ => MetricsRecordingLevel.DEBUG
             };
         }
     }

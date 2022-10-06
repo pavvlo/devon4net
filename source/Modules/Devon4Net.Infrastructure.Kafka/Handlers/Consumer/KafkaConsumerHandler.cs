@@ -3,101 +3,26 @@ using Devon4Net.Infrastructure.Kafka.Common.Const;
 using Devon4Net.Infrastructure.Kafka.Common.Converters;
 using Devon4Net.Infrastructure.Kafka.Exceptions;
 using Devon4Net.Infrastructure.Kafka.Options;
+using Devon4Net.Infrastructure.Kafka.Serialization;
 using Devon4Net.Infrastructure.Logger.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
 {
-    public abstract class KafkaConsumerHandler<T, TV> : IKafkaConsumerHandler where T : class where TV : class
+    public abstract class KafkaConsumerHandler<T, TV> : KafkaHandler, IKafkaConsumerHandler where T : class where TV : class
     {
-        public abstract void HandleCommand(T key, TV value);
-        private KafkaOptions KafkaOptions { get; }
         private bool EnableConsumerFlag { get; set; }
         private bool Commit { get; }
         private int CommitPeriod { get; }
-        private string ConsumerId { get; }
-        protected IServiceCollection Services { get; set; }
+        public abstract void HandleCommand(T key, TV value);
 
-        protected KafkaConsumerHandler(IServiceCollection services, KafkaOptions kafkaOptions, string consumerId, bool commit = false, int commitPeriod = 5)
+        protected KafkaConsumerHandler(IServiceCollection services, KafkaOptions kafkaOptions, string consumerId, bool commit = false, int commitPeriod = 5, bool enableConsumerFlag = true) : base(services, kafkaOptions, consumerId)
         {
-            Services = services;
-            KafkaOptions = kafkaOptions;
-            ConsumerId = consumerId;
-            EnableConsumerFlag = true;
             Commit = commit;
             CommitPeriod = commitPeriod;
-            Consume(Commit, CommitPeriod);
-        }
-
-        public IConsumer<T, TV> GetConsumerBuilder<T, TV>(string consumerId) where T : class where TV : class
-        {
-            if (string.IsNullOrEmpty(consumerId))
-            {
-                throw new ConsumerNotFoundException("The consumerId param can not be null or empty");
-            }
-
-            var consumerOptions = KafkaOptions.Consumers.Find(p => p.ConsumerId == consumerId);
-
-            if (consumerOptions == null)
-            {
-                throw new ConsumerNotFoundException($"Could not find consumer configuration with ConsumerId {consumerId}");
-            }
-
-            var configuration = GetDefaultKafkaConsumerConfiguration(consumerOptions);
-
-            var consumer = new ConsumerBuilder<T, TV>(configuration);
-
-            IConsumer<T, TV> result = null;
-
-            try
-            {
-                consumer.SetErrorHandler((_, e) => Devon4NetLogger.Error(new ConsumerException($"Error code {e.Code} : {e.Reason}")));
-                consumer.SetStatisticsHandler((_, json) => Devon4NetLogger.Information($"Statistics: {json}"));
-                consumer.SetPartitionsAssignedHandler((_, partitions) => Devon4NetLogger.Information($"Assigned partitions: [{string.Join(", ", partitions)}]"));
-                consumer.SetPartitionsRevokedHandler((_, partitions) => Devon4NetLogger.Information($"Revoking assignment: [{string.Join(", ", partitions)}]"));
-
-                result = consumer.Build();
-                if (!string.IsNullOrEmpty(consumerOptions.Topics)) result.Subscribe(consumerOptions.GetTopics());
-            }
-            catch (InvalidOperationException ex)
-            {
-                Devon4NetLogger.Error(ex);
-            }
-
-            return result;
-        }
-
-        #region ConsumerConfiguration
-
-        private static ConsumerConfig GetDefaultKafkaConsumerConfiguration(ConsumerOptions consumer)
-        {
-            var result = new ConsumerConfig
-            {
-                BootstrapServers = consumer.Servers,
-                ClientId = consumer.ClientId,
-                GroupId = consumer.GroupId,
-                EnableAutoCommit = consumer.AutoCommit,
-                StatisticsIntervalMs = consumer.StatisticsIntervalMs ?? KafkaDefaultValues.StatisticsIntervalMs,
-                SessionTimeoutMs = consumer.SessionTimeoutMs ?? KafkaDefaultValues.SessionTimeoutMs,
-                AutoOffsetReset = KafkaConverters.GetAutoOffsetReset(consumer.AutoOffsetReset),
-                EnablePartitionEof = consumer.EnablePartitionEof,
-                IsolationLevel = KafkaConverters.GetIsolationLevel(consumer.IsolationLevel),
-                EnableSslCertificateVerification = consumer.EnableSslCertificateVerification,
-            };
-
-            if (!string.IsNullOrEmpty(consumer.Debug))
-            {
-                result.Debug = consumer.Debug;
-            }
-
-            return result;
-        }
-        #endregion
-
-        public TS GetInstance<TS>()
-        {
-            var sp = Services.BuildServiceProvider();
-            return sp.GetService<TS>();
+            EnableConsumerFlag = enableConsumerFlag;
+            if(EnableConsumerFlag) Consume(Commit, CommitPeriod);
         }
 
         public void EnableConsumer(bool startConsumer = true)
@@ -130,7 +55,7 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
             {
                 try
                 {
-                    using var consumer = GetConsumerBuilder<T, TV>(ConsumerId);
+                    using var consumer = GetConsumerBuilder<T, TV>(HandlerId);
                     while (EnableConsumerFlag)
                     {
                         var consumeResult = consumer?.Consume(cancellationToken.Token);
@@ -158,5 +83,75 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
                 }
             }, cancellationToken.Token);
         }
+
+        #region ConsumerConfiguration
+        public IConsumer<T, TV> GetConsumerBuilder<T, TV>(string consumerId) where T : class where TV : class
+        {
+            if (string.IsNullOrEmpty(consumerId))
+            {
+                throw new ConsumerNotFoundException("The consumerId param can not be null or empty");
+            }
+
+            var consumerOptions = KafkaOptions.Consumers.Find(p => p.ConsumerId == consumerId);
+
+            if (consumerOptions == null)
+            {
+                throw new ConsumerNotFoundException($"Could not find consumer configuration with ConsumerId {consumerId}");
+            }
+
+            var configuration = GetDefaultKafkaConsumerConfiguration(consumerOptions);
+            var consumer = new ConsumerBuilder<T, TV>(configuration);
+            consumer.SetValueDeserializer(new DefaultKafkaDeserializer<TV>());
+
+            IConsumer<T, TV> result = null;
+
+            try
+            {
+                consumer.SetErrorHandler((_, e) => Devon4NetLogger.Error(new ConsumerException($"Error code {e.Code} : {e.Reason}")));
+                consumer.SetStatisticsHandler((_, json) => Devon4NetLogger.Information($"Statistics: {json}"));
+                consumer.SetPartitionsAssignedHandler((_, partitions) => Devon4NetLogger.Information($"Assigned partitions: [{string.Join(", ", partitions)}]"));
+                consumer.SetPartitionsRevokedHandler((_, partitions) => Devon4NetLogger.Information($"Revoking assignment: [{string.Join(", ", partitions)}]"));
+
+
+                result = consumer.Build();
+                if (!string.IsNullOrEmpty(consumerOptions.Topics)) result.Subscribe(consumerOptions.GetTopics());
+            }
+            catch (InvalidOperationException ex)
+            {
+                Devon4NetLogger.Error(ex);
+            }
+
+            return result;
+        }
+
+        private IDeserializer<TV> DefaultKafkaDeserializer()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static ConsumerConfig GetDefaultKafkaConsumerConfiguration(ConsumerOptions consumer)
+        {
+            var result = new ConsumerConfig
+            {
+                BootstrapServers = consumer.Servers,
+                ClientId = consumer.ClientId,
+                GroupId = consumer.GroupId,
+                EnableAutoCommit = consumer.AutoCommit,
+                StatisticsIntervalMs = consumer.StatisticsIntervalMs ?? KafkaDefaultValues.StatisticsIntervalMs,
+                SessionTimeoutMs = consumer.SessionTimeoutMs ?? KafkaDefaultValues.SessionTimeoutMs,
+                AutoOffsetReset = KafkaConverters.GetAutoOffsetReset(consumer.AutoOffsetReset),
+                EnablePartitionEof = consumer.EnablePartitionEof,
+                IsolationLevel = KafkaConverters.GetIsolationLevel(consumer.IsolationLevel),
+                EnableSslCertificateVerification = consumer.EnableSslCertificateVerification,
+            };
+
+            if (!string.IsNullOrEmpty(consumer.Debug))
+            {
+                result.Debug = consumer.Debug;
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

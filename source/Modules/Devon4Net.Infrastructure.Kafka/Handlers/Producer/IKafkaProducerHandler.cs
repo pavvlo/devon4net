@@ -6,7 +6,6 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Producer
     {
         IProducer<T, TV> GetProducerBuilder<T, TV>(string producerId) where T : class where TV : class;
         Task<DeliveryResult<T, TV>> DeliverMessage<T, TV>(T key, TV value, string producerId) where T : class where TV : class;
-        TS GetInstance<TS>();
         Task<DeliveryResult<T, TV>> SendMessage(T key, TV value);
     }
 }

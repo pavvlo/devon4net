@@ -1,28 +1,29 @@
 ﻿using Confluent.Kafka;
 using Devon4Net.Infrastructure.Kafka.Common.Const;
-using Devon4Net.Infrastructure.Kafka.Common.Extensions;
+using Devon4Net.Infrastructure.Kafka.Common.Converters;
 using Devon4Net.Infrastructure.Kafka.Options;
+using Devon4Net.Infrastructure.Kafka.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Streamiz.Kafka.Net;
-using Streamiz.Kafka.Net.Metrics;
 using Streamiz.Kafka.Net.SerDes;
-using Streamiz.Kafka.Net.Stream;
+
 
 namespace Devon4Net.Infrastructure.Kafka.Streams.Services
 {
-    public abstract class KafkaStreamService<TInput, TOutput> : BackgroundService where TOutput : class where TInput : class
+    public abstract class KafkaStreamService<TKey, TValue> : BackgroundService where TValue : class where TKey : class
     {
-        protected string ApplicationId { get; set; }
-        protected IStreamConfig Configuration { get; set; }
+       
+        private StreamOptions StreamOptions { get; set; }
+        private KafkaStream Stream { get; set; }
         protected StreamBuilder StreamBuilder { get; set; }
-        protected StreamOptions StreamOptions { get; set; }
-        protected KafkaStream Stream { get; set; }
-        public abstract void CreateStreamBuilder(ref IKStream<TInput, TOutput> stream);
+        public IServiceCollection Services { get; }
+        public abstract void CreateStreamBuilder();
 
-        public KafkaStreamService(KafkaOptions kafkaOptions, string applicationId)
+        public KafkaStreamService(IServiceCollection services, KafkaOptions kafkaOptions, string applicationId)
         {
-            ApplicationId = applicationId;
-            Configuration = GetConfigFromOptions(kafkaOptions);
+            Services = services;
+            StreamOptions = kafkaOptions.Streams.Find(s => s.ApplicationId == applicationId);
             GenerateStreamBuilder();
         }
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,74 +42,38 @@ namespace Devon4Net.Infrastructure.Kafka.Streams.Services
             await base.StopAsync(cancellationToken);
         }
 
+        #region StreamConfiguration
+
         private void GenerateStreamBuilder()
         {
             StreamBuilder = new StreamBuilder();
-            var topics = new List<string>(StreamOptions.GetTopics());
-
-            var stream = StreamBuilder.Stream<TInput, TOutput>(topics.PopOrDefault());
-
-            if (StreamOptions.AllowMultipleTopics) MergeMultipleStreams(ref stream, topics);
-
-            CreateStreamBuilder(ref stream);
-
-            Stream = new KafkaStream(StreamBuilder.Build(), Configuration);
+            CreateStreamBuilder();
+            Stream = new KafkaStream(StreamBuilder.Build(), GetConfigFromOptions());
         }
 
-        private void MergeMultipleStreams(ref IKStream<TInput, TOutput> stream, List<string> topics)
+        private IStreamConfig GetConfigFromOptions()
         {
-            while (topics.Count > 0)
-            {
-                string topic = topics.PopOrDefault();
-                stream.Merge(StreamBuilder.Stream<TInput, TOutput>(topic));
-            }
-        }
-
-
-        private IStreamConfig GetConfigFromOptions(KafkaOptions kafkaOptions)
-        {
-            StreamOptions = kafkaOptions.Streams.Find(s => s.ApplicationId == ApplicationId);
-            var config = new StreamConfig<StringSerDes, StringSerDes>();
+            var config = new StreamConfig();
             
+            config.DefaultValueSerDes = new DefaultKafkaSerDes<TValue>();
+            config.DefaultKeySerDes = new StringSerDes();
+
             config.ApplicationId = StreamOptions.ApplicationId;
             config.BootstrapServers = StreamOptions.Servers;
-            config.AutoOffsetReset = GetAutoOffsetReset(StreamOptions.AutoOffsetReset);
+            config.AutoOffsetReset = KafkaConverters.GetAutoOffsetReset(StreamOptions.AutoOffsetReset);
             config.StateDir = StreamOptions.StateDir;
             config.CommitIntervalMs = StreamOptions.CommitIntervalMs ?? KafkaDefaultValues.StreamsCommitIntervalMs;
-            config.Guarantee = GetProcessingGuarantee(StreamOptions.Guarantee);
-            config.MetricsRecording = GetMetricsRecordingLevel(StreamOptions.MetricsRecording);
+            config.Guarantee = KafkaConverters.GetProcessingGuarantee(StreamOptions.Guarantee);
+            config.MetricsRecording = KafkaConverters.GetMetricsRecordingLevel(StreamOptions.MetricsRecording);
 
             return config;
         }
 
-        private static AutoOffsetReset GetAutoOffsetReset(string autoOffsetReset)
+        protected TS GetInstance<TS>()
         {
-            return autoOffsetReset.ToLower() switch
-            {
-                "latest" => AutoOffsetReset.Latest,
-                "earliest" => AutoOffsetReset.Earliest,
-                "error" => AutoOffsetReset.Error,
-                _ => AutoOffsetReset.Latest
-            };
+            var sp = Services.BuildServiceProvider();
+            return sp.GetService<TS>();
         }
-        private static ProcessingGuarantee GetProcessingGuarantee(string processingGuarantee)
-        {
-            return processingGuarantee.ToLower() switch
-            {
-                "at_least_one" => ProcessingGuarantee.AT_LEAST_ONCE,
-                "exactly_one" => ProcessingGuarantee.EXACTLY_ONCE,
-                _ => ProcessingGuarantee.AT_LEAST_ONCE
-            };
-        }
-        private static MetricsRecordingLevel GetMetricsRecordingLevel(string metricsRecordingLevel)
-        {
-            return metricsRecordingLevel.ToLower() switch
-            {
-                "info" => MetricsRecordingLevel.INFO,
-                "debug" => MetricsRecordingLevel.DEBUG,
-                _ => MetricsRecordingLevel.DEBUG
-            };
-        }
-
+        #endregion
     }
 }
