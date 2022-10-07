@@ -19,9 +19,10 @@ var devonfwOptions = builder.Services.SetupDevonfw(builder.Configuration);
 builder.Services.SetupMiddleware(builder.Configuration);
 builder.Services.SetupLog(builder.Configuration);
 builder.Services.SetupSwagger(builder.Configuration);
+builder.Services.SetupDependencyInjection(builder.Configuration);
 
 //UoW CONFIGURATION
-//builder.Services.SetupUnitOfWork(typeof(DIConfiguration));
+builder.Services.SetupUnitOfWork(typeof(DIConfiguration));
 
 //KAFKA CONFIGURATION
 builder.Services.SetupKafka(builder.Configuration);
