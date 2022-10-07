@@ -20,7 +20,6 @@ builder.Services.SetupSwagger(builder.Configuration);
 
 //KAFKA CONFIGURATION
 builder.Services.SetupKafka(builder.Configuration);
-
 builder.Services.AddKafkaStreamService<FileTransferStreamService>(builder.Configuration, "file_transfer");
 #endregion
 

@@ -10,13 +10,13 @@ using Microsoft.Extensions.Options;
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers.Producer
 {
-    public class KafkaProducerHandler<T, TV> : KafkaHandler, IKafkaProducerHandler<T, TV> where T : class where TV : class
+    public class KafkaProducerHandler<TKey, TValue> : KafkaHandler, IKafkaProducerHandler<TKey, TValue> where TKey : class where TValue : class
     {
         public KafkaProducerHandler(IServiceCollection services, KafkaOptions kafkaOptions, string producerId) : base(services, kafkaOptions, producerId)
         {
         }
 
-        public Task<DeliveryResult<T, TV>> SendMessage(T key, TV value)
+        public Task<DeliveryResult<TKey, TValue>> SendMessage(TKey key, TValue value)
         {
             var result = DeliverMessage(key, value, HandlerId);
             var date = result.Result.Timestamp.UtcDateTime;
@@ -24,14 +24,14 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Producer
             return result;
         }
 
-        public async Task<DeliveryResult<T, TV>> DeliverMessage<T, TV>(T key, TV value, string producerId) where T : class where TV : class
+        public async Task<DeliveryResult<TKey, TValue>> DeliverMessage(TKey key, TValue value, string producerId)
         {
-            DeliveryResult<T, TV> result;
+            DeliveryResult<TKey, TValue> result;
             var producerOptions = GetProducerOptions(producerId);
-            using var producer = GetProducerBuilder<T, TV>(producerId);
+            using var producer = GetProducerBuilder(producerId);
             try
             {
-                result = await producer.ProduceAsync(producerOptions.Topic, new Message<T, TV> { Key = key, Value = value }).ConfigureAwait(false);
+                result = await producer.ProduceAsync(producerOptions.Topic, new Message<TKey, TValue> { Key = key, Value = value }).ConfigureAwait(false);
             }
             catch (ProduceException<string, string> e)
             {
@@ -48,21 +48,22 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Producer
         }
 
         #region ProcucerConfiguration
-        public IProducer<T, TV> GetProducerBuilder<T, TV>(string producerId) where T : class where TV : class
+        // TODO serializer as parameters
+        public IProducer<TKey, TValue> GetProducerBuilder(string producerId) 
         {
             var producerOptions = GetProducerOptions(producerId);
 
             var configuration = GetDefaultKafkaProducerConfiguration(producerOptions);
-            var producer = GetProducerBuilderInstance<T, TV>(configuration);
-            producer.SetValueSerializer(new DefaultKafkaSerializer<TV>());
+            var producer = GetProducerBuilderInstance(configuration);
+            producer.SetValueSerializer(new DefaultKafkaSerializer<TValue>());
             var result = producer.Build();
 
             return result;
         }
 
-        private static ProducerBuilder<T, TV> GetProducerBuilderInstance<T, TV>(ProducerConfig configuration) where T : class where TV : class
+        private static ProducerBuilder<TKey, TValue> GetProducerBuilderInstance(ProducerConfig configuration) 
         {
-            var producer = new ProducerBuilder<T, TV>(configuration);
+            var producer = new ProducerBuilder<TKey, TValue>(configuration);
 
             producer = producer.SetErrorHandler((_, e) => Devon4NetLogger.Error(new ConsumerException($"Error code {e.Code} : {e.Reason}")));
             producer = producer.SetStatisticsHandler((_, json) => Devon4NetLogger.Information($"Statistics: {json}"));

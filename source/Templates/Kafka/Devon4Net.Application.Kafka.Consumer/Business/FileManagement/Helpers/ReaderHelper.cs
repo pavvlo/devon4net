@@ -4,9 +4,9 @@ namespace Devon4Net.Application.Kafka.Consumer.Business.FileManagement.Helpers
 {
     public static class ReaderHelper
     {
-        public static async Task ReadPiecesAndWriteToFile(IEnumerable<DataPiece<byte[]>> pieces, string directoryPath, string fileName = "output", int byteChunks = 2048)
+        public static async Task ReadPiecesAndWriteToFile(IEnumerable<DataPieceDto<byte[]>> pieces, string directoryPath, string fileName = "output", int byteChunks = 2048)
         {
-            using (var fileStream = new FileStream(@$"{directoryPath}\{pieces.First().FileName}.{pieces.First().FileExtension}", FileMode.Create))
+            using (var fileStream = new FileStream(@$"{directoryPath}\{pieces.First().FileName}{pieces.First().FileExtension}", FileMode.Create))
             {
                 foreach (var piece in pieces)
                 {
@@ -15,7 +15,7 @@ namespace Devon4Net.Application.Kafka.Consumer.Business.FileManagement.Helpers
             }
         }
 
-        private static async void ReadPiecesAndWriteToFileAsync(IEnumerable<DataPiece<byte[]>> pieces, string directoryPath, string fileName = "output", int byteChunks = 2048)
+        private static async void ReadPiecesAndWriteToFileAsync(IEnumerable<DataPieceDto<byte[]>> pieces, string directoryPath, string fileName = "output", int byteChunks = 2048)
         {
             var taskList = new List<Task>();
             foreach (var piece in pieces)

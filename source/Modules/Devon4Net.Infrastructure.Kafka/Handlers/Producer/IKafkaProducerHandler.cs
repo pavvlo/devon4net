@@ -2,10 +2,10 @@
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers.Producer
 {
-    public interface IKafkaProducerHandler<T, TV>
+    public interface IKafkaProducerHandler<TKey, TValue> where TKey : class where TValue : class
     {
-        IProducer<T, TV> GetProducerBuilder<T, TV>(string producerId) where T : class where TV : class;
-        Task<DeliveryResult<T, TV>> DeliverMessage<T, TV>(T key, TV value, string producerId) where T : class where TV : class;
-        Task<DeliveryResult<T, TV>> SendMessage(T key, TV value);
+        IProducer<TKey, TValue> GetProducerBuilder(string producerId);
+        Task<DeliveryResult<TKey, TValue>> DeliverMessage(TKey key, TValue value, string producerId);
+        Task<DeliveryResult<TKey, TValue>> SendMessage(TKey key, TValue value);
     }
 }

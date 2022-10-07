@@ -3,6 +3,5 @@
     public interface IKafkaHandler
     {
         TS GetInstance<TS>();
-
     }
 }

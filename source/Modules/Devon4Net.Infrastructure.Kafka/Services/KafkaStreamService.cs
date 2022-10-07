@@ -51,6 +51,7 @@ namespace Devon4Net.Infrastructure.Kafka.Streams.Services
             Stream = new KafkaStream(StreamBuilder.Build(), GetConfigFromOptions());
         }
 
+        // 
         private IStreamConfig GetConfigFromOptions()
         {
             var config = new StreamConfig();

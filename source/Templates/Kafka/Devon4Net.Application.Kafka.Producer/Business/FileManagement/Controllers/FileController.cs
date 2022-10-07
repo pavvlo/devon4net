@@ -30,12 +30,11 @@ namespace Devon4Net.Application.Kafka.Producer.Business.FileManagement.Controlle
         {
             try
             {
-                var dataPieces = FileHelper.GetDataPieces(file);
+                var dataPieces = DataPieceFileHelper.GetDataPieces(file);
                 foreach(var piece in dataPieces)
                 {
                     await Producer.SendMessage("jsonKey", piece);
                 }
-                //await ReadPiecesAndWriteToFile(dataPieces, @"C:\Projects\devon4net\POC\Json");
                 
             }
             catch (Exception e)
@@ -45,27 +44,6 @@ namespace Devon4Net.Application.Kafka.Producer.Business.FileManagement.Controlle
             }
             
             return Ok();
-        }
-
-        private async Task ReadPiecesAndWriteToFile(IEnumerable<DataPiece<byte[]>> pieces, string directoryPath, string fileName = "output", int byteChunks = 2048)
-        {
-            using (var fileStream = new FileStream(@$"{directoryPath}\{pieces.First().FileName}.{pieces.First().FileExtension}", FileMode.Create))
-            {
-                foreach (var piece in pieces)
-                {
-                    await fileStream.WriteAsync(piece.Data, 0, piece.Data.Length);
-                }
-            }
-        }
-
-        private async void ReadPiecesAndWriteToFileAsync(IEnumerable<DataPiece<byte[]>> pieces, string directoryPath, string fileName = "output", int byteChunks = 2048)
-        {
-            var taskList = new List<Task>();
-            foreach (var piece in pieces)
-            {
-                //taskList.Append(ReadPieceAndWriteToFile(piece, directoryPath));
-            }
-            await Task.WhenAll(taskList);
         }
 
     }

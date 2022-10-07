@@ -2,9 +2,9 @@
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
 {
-    public interface IKafkaConsumerHandler
+    public interface IKafkaConsumerHandler<TKey, TValue> where TKey : class where TValue : class
     {
-        IConsumer<T, TV> GetConsumerBuilder<T, TV>(string consumerId) where T : class where TV : class;
+        IConsumer<TKey, TValue> GetConsumerBuilder(string consumerId);
         void EnableConsumer(bool startConsumer = true);
         void DisableConsumer();
     }

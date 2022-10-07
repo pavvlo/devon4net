@@ -10,12 +10,12 @@ using Microsoft.Extensions.Options;
 
 namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
 {
-    public abstract class KafkaConsumerHandler<T, TV> : KafkaHandler, IKafkaConsumerHandler where T : class where TV : class
+    public abstract class KafkaConsumerHandler<TKey, TValue> : KafkaHandler, IKafkaConsumerHandler<TKey, TValue> where TKey : class where TValue : class
     {
         private bool EnableConsumerFlag { get; set; }
         private bool Commit { get; }
         private int CommitPeriod { get; }
-        public abstract void HandleCommand(T key, TV value);
+        public abstract void HandleCommand(TKey key, TValue value);
 
         protected KafkaConsumerHandler(IServiceCollection services, KafkaOptions kafkaOptions, string consumerId, bool commit = false, int commitPeriod = 5, bool enableConsumerFlag = true) : base(services, kafkaOptions, consumerId)
         {
@@ -55,7 +55,7 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
             {
                 try
                 {
-                    using var consumer = GetConsumerBuilder<T, TV>(HandlerId);
+                    using var consumer = GetConsumerBuilder(HandlerId);
                     while (EnableConsumerFlag)
                     {
                         var consumeResult = consumer?.Consume(cancellationToken.Token);
@@ -85,7 +85,7 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
         }
 
         #region ConsumerConfiguration
-        public IConsumer<T, TV> GetConsumerBuilder<T, TV>(string consumerId) where T : class where TV : class
+        public IConsumer<TKey, TValue> GetConsumerBuilder(string consumerId)
         {
             if (string.IsNullOrEmpty(consumerId))
             {
@@ -100,10 +100,10 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
             }
 
             var configuration = GetDefaultKafkaConsumerConfiguration(consumerOptions);
-            var consumer = new ConsumerBuilder<T, TV>(configuration);
-            consumer.SetValueDeserializer(new DefaultKafkaDeserializer<TV>());
+            var consumer = new ConsumerBuilder<TKey, TValue>(configuration);
+            consumer.SetValueDeserializer(new DefaultKafkaDeserializer<TValue>());
 
-            IConsumer<T, TV> result = null;
+            IConsumer<TKey, TValue> result = null;
 
             try
             {
@@ -122,11 +122,6 @@ namespace Devon4Net.Infrastructure.Kafka.Handlers.Consumer
             }
 
             return result;
-        }
-
-        private IDeserializer<TV> DefaultKafkaDeserializer()
-        {
-            throw new NotImplementedException();
         }
 
         private static ConsumerConfig GetDefaultKafkaConsumerConfiguration(ConsumerOptions consumer)

@@ -8,5 +8,6 @@ namespace Devon4Net.Application.Kafka.Consumer.Domain.RepositoryInterfaces
         IList<DataPiece<byte[]>> GetPiecesByFileGuid(string guid);
         bool IsFileComplete(string guid);
         IList<string> GetDistinctFileGuids();
+        bool DeleteByGuid(string guid);
     }
 }

@@ -13,6 +13,11 @@ namespace Devon4Net.Application.Kafka.Consumer.Data.Repositories
         {
         }
 
+        public bool DeleteByGuid(string guid)
+        {
+            return Delete(o => o.Guid == Guid.Parse(guid)).GetAwaiter().GetResult();
+        }
+
         public IList<string> GetDistinctFileGuids()
         {
             var pieces = Get().GetAwaiter().GetResult();

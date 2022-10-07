@@ -1,9 +1,5 @@
 ﻿using Confluent.Kafka;
 using Streamiz.Kafka.Net.SerDes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 
 namespace Devon4Net.Infrastructure.Kafka.Serialization
